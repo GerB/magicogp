@@ -1,0 +1,26 @@
+{
+    "name": "ger/magicogp",
+    "type": "phpbb-extension",
+    "description": "Enables OGP detection for pasted URLS in posts",
+    "homepage": "",
+    "version": "1.0.0",
+    "time": "2017-09-12",
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "Ger",
+            "email": "",
+            "homepage": "https://github.com/GerB",
+            "role": ""
+        }
+    ],
+    "require": {
+        "php": ">=5.4"
+    },
+    "extra": {
+        "display-name": "Magic OGP parser",
+        "soft-require": {
+            "phpbb/phpbb": ">=3.2,"
+        }
+    }
+}

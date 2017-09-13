@@ -1,0 +1,5 @@
+services:
+    ger.magicogp.listener:
+        class: ger\magicogp\event\main_listener    
+        tags:
+            - { name: event.listener }
