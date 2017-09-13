@@ -15,7 +15,8 @@
         }
     ],
     "require": {
-        "php": ">=5.4"
+        "php": ">=5.4",
+        "ext-curl" : "*"
     },
     "extra": {
         "display-name": "Magic OGP parser",

@@ -4,6 +4,7 @@ namespace ger\magicogp;
 
 class ext extends \phpbb\extension\base
 {
+    // Check availabillity of PHP functions
     public function is_enableable()
     {
 		if (! function_exists('curl_init') || !function_exists('libxml_use_internal_errors')|| !class_exists("\DOMXPath")  || !class_exists("\DOMDocument") )
