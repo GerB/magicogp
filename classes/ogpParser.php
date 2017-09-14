@@ -52,9 +52,10 @@ class ogpParser
         curl_setopt($curl, CURLOPT_TIMEOUT, 15);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_USERAGENT, 'Googlebot/2.1 (+http://www.google.com/bot.html)' ); // Prevent cookie walls by posing as a search engine
 
         $response = curl_exec($curl);
-
+        
         curl_close($curl);
 
         if (!empty($response)) {
