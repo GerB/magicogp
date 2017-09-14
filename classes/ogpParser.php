@@ -137,6 +137,20 @@ class ogpParser
                 }
             }
         }
+        
+        // Still no image? Try fetching the icon
+        if (!isset($this->values['image'])) {
+            $domxpath = new \DOMXPath($doc);
+            $elements = $domxpath->query("//link[@rel='icon']");
+
+            if ($elements->length > 0) {
+                $domattr = $elements->item(0)->attributes->getNamedItem('href');
+                if ($domattr) {
+                    $this->values['image'] = $domattr->value;
+                    $this->values['image_src'] = $domattr->value;
+                }
+            }
+        }
 
         // All done
         return empty($this->values) ? false : $this->values;
