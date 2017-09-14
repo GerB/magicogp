@@ -12,6 +12,12 @@ class ogpParser
      */
     static public function jsonTags($tag)
     {
+        // Magic urls should have a taglength of 0
+        if ($tag->getLen() > 0)
+        {
+            return true;
+        }
+        
         // Since the textformatter requires us to use a static function, we need to call ourselves here         
         $ogpParser = new self();
                 
