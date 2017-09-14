@@ -20,5 +20,6 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-    'MISSING_REQUIREMENTS' => 'The magic OGP requires cURL, libXML, DOMDocument and DOMXPath to read the contents of pasted urls. At least one of these is not available on your server and therefore the extension cannot be installed.',
+    'LOG_MISSING_SERVER_REQ'    => 'The magic OGP requires cURL, libXML, DOMDocument and DOMXPath to read the contents of pasted urls. At least one of these is not available (anymore) on your server.',
+    'MISSING_REQUIREMENTS'      => 'The magic OGP requires cURL, libXML, DOMDocument and DOMXPath to read the contents of pasted urls. At least one of these is not available on your server and therefore the extension cannot be installed.',
 		));    

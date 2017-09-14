@@ -20,5 +20,6 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-    'MISSING_REQUIREMENTS' => 'De extensie heeft  cURL, libXML, DOMDocument en DOMXPath  nodig om de inhoud van geplakte links op te halen. Minstens een onderdeel mist, waardoor de extensie niet geïnstalleerd kan worden.',
+    'LOG_MISSING_SERVER_REQ'    => 'Magic OGP heeft cURL, libXML, DOMDocument en DOMXPath nodig om de inhoud van geplakte links op te halen. Minstens een onderdeel mist, waardoor de extensie niet werkt.',
+    'MISSING_REQUIREMENTS'      => 'De extensie heeft cURL, libXML, DOMDocument en DOMXPath nodig om de inhoud van geplakte links op te halen. Minstens een onderdeel mist, waardoor de extensie niet geïnstalleerd kan worden.',
 		));    

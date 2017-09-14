@@ -1,5 +1,7 @@
 services:
     ger.magicogp.listener:
-        class: ger\magicogp\event\main_listener    
+        class: ger\magicogp\event\main_listener
+        arguments:
+            - '@log'
         tags:
             - { name: event.listener }
