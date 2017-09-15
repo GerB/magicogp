@@ -10,6 +10,7 @@
     height: auto;
     float: left;
     width: calc(100% - 22px);
+    margin: 10px auto;
 }
 .ogpblock img {
     float: left;
