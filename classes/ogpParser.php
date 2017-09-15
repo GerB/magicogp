@@ -72,8 +72,6 @@ class ogpParser
             curl_setopt($curl, CURLOPT_USERAGENT, $useragentOverride ); 
 
         }
-//        curl_setopt($curl, CURLOPT_USERAGENT, ); // Prevent cookie walls by posing as a search engine
-
         $response = curl_exec($curl);
         
         curl_close($curl);
@@ -151,25 +149,10 @@ class ogpParser
                 $domattr = $elements->item(0)->attributes->getNamedItem('href');
                 if ($domattr) {
                     $found['image'] = $domattr->value;
-                    $found['image_src'] = $domattr->value;
                 }
             }
         }
-        
-        // Still no image? Try fetching the icon
-        if (!isset($found['image'])) {
-            $domxpath = new \DOMXPath($doc);
-            $elements = $domxpath->query("//link[@rel='icon']");
-
-            if ($elements->length > 0) {
-                $domattr = $elements->item(0)->attributes->getNamedItem('href');
-                if ($domattr) {
-                    $found['image'] = $domattr->value;
-                    $found['image_src'] = $domattr->value;
-                }
-            }
-        }
-        
+                
         // Have we been here before?
         if (count($this->values) == 0)
         {
