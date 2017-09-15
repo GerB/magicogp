@@ -4,6 +4,14 @@ namespace ger\magicogp\classes;
 class ogpParser
 {
 
+
+    /**
+     * Holds all the OGP values
+     * @var array
+     */
+    public $values = array();
+    
+    
     /**
      * Get JSON encoded OGP tags
      * 
@@ -21,28 +29,35 @@ class ogpParser
         // Since the textformatter requires us to use a static function, we need to call ourselves here         
         $ogpParser = new self();
                 
-        $ogpFull = $ogpParser->fetch($tag->getAttribute('url'));
-        if (isset($ogpFull['image']) && isset($ogpFull['title']) && isset($ogpFull['description']))
+        $ogpParser->fetch($tag->getAttribute('url'));
+        if (!isset($ogpParser->values['image']) || !isset($ogpParser->values['title']) || !isset($ogpParser->values['description']))
         {
-            $ogp = ['image' => $ogpFull['image'], 'title' => $ogpFull['title'], 'description' => $ogpFull['description']];
+            // Try to override the user agent string
+            $ogpParser->fetch($tag->getAttribute('url') , 'Googlebot/2.1 (+http://www.google.com/bot.html)');
+        }
+        
+        // We at least want a title and description
+        if (isset($ogpParser->values['title']) && isset($ogpParser->values['description']))
+        {
+            $ogp = ['title' => $ogpParser->values['title'], 'description' => $ogpParser->values['description']];
+            if (isset($ogpParser->values['image']))
+            {
+                $ogp['image'] = $ogpParser->values['image'];
+            }
             $tag->setAttribute('ogp', json_encode($ogp));
         }
         return true;
     }
 
-    /**
-     * Holds all the OGP values
-     * @var array
-     */
-    private $values = array();
-
+    
     /**
      * Fetches a URI and parses it for Open Graph data
      *
-     * @param $uri    URI to page to parse for Open Graph data
+     * @param string $uri                   URI to page to parse for Open Graph data
+     * @param string $useragentOverride     Useragent string to bypass blocks like cookie walls etc.
      * @return array|bool array with OGP values or false on error
      */
-    public function fetch($uri)
+    public function fetch($uri, $useragentOverride = false)
     {
         $curl = curl_init($uri);
 
@@ -52,19 +67,20 @@ class ogpParser
         curl_setopt($curl, CURLOPT_TIMEOUT, 15);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_USERAGENT, 'Googlebot/2.1 (+http://www.google.com/bot.html)' ); // Prevent cookie walls by posing as a search engine
+        if ($useragentOverride)
+        {
+            curl_setopt($curl, CURLOPT_USERAGENT, $useragentOverride ); 
+
+        }
+//        curl_setopt($curl, CURLOPT_USERAGENT, ); // Prevent cookie walls by posing as a search engine
 
         $response = curl_exec($curl);
         
         curl_close($curl);
 
-        if (!empty($response)) {
-            return $this->_parse($response);
-        } else {
-            return false;
-        }
+        return empty($response) ? false: $this->_parse($response);
     }
-
+    
     /**
      * Parses HTML and extracts Open Graph data, this assumes
      * the document is at least well formed.
@@ -74,6 +90,7 @@ class ogpParser
      */
     private function _parse($html)
     {
+        $found = [];
         // Prevent errors on bad documents, load HTML and reset error handling
         $old_libxml_error = libxml_use_internal_errors(true);
         $doc = new \DOMDocument();
@@ -86,26 +103,26 @@ class ogpParser
         }
 
         $defaultMetaDesc = null;
-
+        
         // Loop trough all meta tags
         foreach ($tags AS $tag) {
             // Default has property and content
             if ($tag->hasAttribute('property') &&
                 strpos($tag->getAttribute('property'), 'og:') === 0) {
                 $key = strtr(substr($tag->getAttribute('property'), 3), '-', '_');
-                $this->values[$key] = $tag->getAttribute('content');
+                $found[$key] = $tag->getAttribute('content');
             }
             // But some use name and conentinstead
             if ($tag->hasAttribute('name') &&
                 strpos($tag->getAttribute('name'), 'og:') === 0) {
                 $key = strtr(substr($tag->getAttribute('name'), 3), '-', '_');
-                $this->values[$key] = $tag->getAttribute('content');
+                $found[$key] = $tag->getAttribute('content');
             }
             // And others use property and value
             if ($tag->hasAttribute('value') && $tag->hasAttribute('property') &&
                 strpos($tag->getAttribute('property'), 'og:') === 0) {
                 $key = strtr(substr($tag->getAttribute('property'), 3), '-', '_');
-                $this->values[$key] = $tag->getAttribute('value');
+                $found[$key] = $tag->getAttribute('value');
             }
             // Description might just be in the standard meta tag for it
             if ($tag->hasAttribute('name') && $tag->getAttribute('name') === 'description') {
@@ -114,41 +131,57 @@ class ogpParser
         }
         
         // Fetch title from the title tag if none yet
-        if (!isset($this->values['title'])) {
+        if (!isset($found['title'])) {
             $titles = $doc->getElementsByTagName('title');
             if ($titles->length > 0) {
-                $this->values['title'] = $titles->item(0)->textContent;
+                $found['title'] = $titles->item(0)->textContent;
             }
         }
         // Add default description if none yet
-        if (!isset($this->values['description']) && $defaultMetaDesc) {
-            $this->values['description'] = $defaultMetaDesc;
+        if (!isset($found['description']) && $defaultMetaDesc) {
+            $found['description'] = $defaultMetaDesc;
         }
 
         // Search image_src if no img yet
-        if (!isset($this->values['image'])) {
+        if (!isset($found['image'])) {
             $domxpath = new \DOMXPath($doc);
             $elements = $domxpath->query("//link[@rel='image_src']");
 
             if ($elements->length > 0) {
                 $domattr = $elements->item(0)->attributes->getNamedItem('href');
                 if ($domattr) {
-                    $this->values['image'] = $domattr->value;
-                    $this->values['image_src'] = $domattr->value;
+                    $found['image'] = $domattr->value;
+                    $found['image_src'] = $domattr->value;
                 }
             }
         }
         
         // Still no image? Try fetching the icon
-        if (!isset($this->values['image'])) {
+        if (!isset($found['image'])) {
             $domxpath = new \DOMXPath($doc);
             $elements = $domxpath->query("//link[@rel='icon']");
 
             if ($elements->length > 0) {
                 $domattr = $elements->item(0)->attributes->getNamedItem('href');
                 if ($domattr) {
-                    $this->values['image'] = $domattr->value;
-                    $this->values['image_src'] = $domattr->value;
+                    $found['image'] = $domattr->value;
+                    $found['image_src'] = $domattr->value;
+                }
+            }
+        }
+        
+        // Have we been here before?
+        if (count($this->values) == 0)
+        {
+            $this->values = $found;
+        }
+        else
+        {
+            foreach($found as $key => $value)
+            {
+                if (strlen($value) > strlen($this->values[$key]))
+                {
+                    $this->values[$key] = $value;
                 }
             }
         }
