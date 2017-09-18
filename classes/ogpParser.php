@@ -3,14 +3,11 @@ namespace ger\magicogp\classes;
 
 class ogpParser
 {
-
-
     /**
      * Holds all the OGP values
      * @var array
      */
     public $values = array();
-    
     
     /**
      * Get JSON encoded OGP tags
@@ -76,19 +73,20 @@ class ogpParser
         
         curl_close($curl);
 
-        return empty($response) ? false: $this->_parse($response);
+        return empty($response) ? false: $this->parse($response);
     }
     
     /**
-     * Parses HTML and extracts Open Graph data, this assumes
-     * the document is at least well formed.
+     * Parses HTML and extracts Open Graph data
      *
      * @param $html    HTML to parse
      * @return array
      */
-    private function _parse($html)
+    private function parse($html)
     {
+        // Init array for this round
         $found = [];
+        
         // Prevent errors on bad documents, load HTML and reset error handling
         $old_libxml_error = libxml_use_internal_errors(true);
         $doc = new \DOMDocument();
@@ -96,58 +94,66 @@ class ogpParser
         libxml_use_internal_errors($old_libxml_error);
 
         $tags = $doc->getElementsByTagName('meta');
-        if (!$tags || $tags->length === 0) {
+        if (!$tags || $tags->length === 0) 
+            {
             return false;
         }
 
         $defaultMetaDesc = null;
         
         // Loop trough all meta tags
-        foreach ($tags AS $tag) {
+        foreach ($tags AS $tag) 
+        {
             // Default has property and content
-            if ($tag->hasAttribute('property') &&
-                strpos($tag->getAttribute('property'), 'og:') === 0) {
+            if ($tag->hasAttribute('property') && strpos($tag->getAttribute('property'), 'og:') === 0) 
+            {
                 $key = strtr(substr($tag->getAttribute('property'), 3), '-', '_');
                 $found[$key] = $tag->getAttribute('content');
             }
             // But some use name and conentinstead
-            if ($tag->hasAttribute('name') &&
-                strpos($tag->getAttribute('name'), 'og:') === 0) {
+            if ($tag->hasAttribute('name') && strpos($tag->getAttribute('name'), 'og:') === 0) 
+            {
                 $key = strtr(substr($tag->getAttribute('name'), 3), '-', '_');
                 $found[$key] = $tag->getAttribute('content');
             }
             // And others use property and value
-            if ($tag->hasAttribute('value') && $tag->hasAttribute('property') &&
-                strpos($tag->getAttribute('property'), 'og:') === 0) {
+            if ($tag->hasAttribute('value') && $tag->hasAttribute('property') && strpos($tag->getAttribute('property'), 'og:') === 0) 
+            {
                 $key = strtr(substr($tag->getAttribute('property'), 3), '-', '_');
                 $found[$key] = $tag->getAttribute('value');
             }
             // Description might just be in the standard meta tag for it
-            if ($tag->hasAttribute('name') && $tag->getAttribute('name') === 'description') {
+            if ($tag->hasAttribute('name') && $tag->getAttribute('name') === 'description') 
+            {
                 $defaultMetaDesc = $tag->getAttribute('content');
             }
         }
         
         // Fetch title from the title tag if none yet
-        if (!isset($found['title'])) {
+        if (!isset($found['title'])) 
+        {
             $titles = $doc->getElementsByTagName('title');
-            if ($titles->length > 0) {
+            if ($titles->length > 0) 
+            {
                 $found['title'] = $titles->item(0)->textContent;
             }
         }
         // Add default description if none yet
-        if (!isset($found['description']) && $defaultMetaDesc) {
+        if (!isset($found['description']) && $defaultMetaDesc) 
+        {
             $found['description'] = $defaultMetaDesc;
         }
 
         // Search image_src if no img yet
-        if (!isset($found['image'])) {
+        if (!isset($found['image'])) 
+        {
             $domxpath = new \DOMXPath($doc);
             $elements = $domxpath->query("//link[@rel='image_src']");
-
-            if ($elements->length > 0) {
+            if ($elements->length > 0) 
+            {
                 $domattr = $elements->item(0)->attributes->getNamedItem('href');
-                if ($domattr) {
+                if ($domattr) 
+                {
                     $found['image'] = $domattr->value;
                 }
             }
