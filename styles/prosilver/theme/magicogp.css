@@ -14,11 +14,13 @@
 }
 .ogpblock img {
     float: left;
+    width: 150px;
     max-width: calc(100% - 10px);
 }
 .ogptext {
     float: left;
     margin-left: 10px;
+    width: calc(100% - 180px);
 }
 .ogpblock h4 {
     font-size: 1.4em;
