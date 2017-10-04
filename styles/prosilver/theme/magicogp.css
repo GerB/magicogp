@@ -16,6 +16,7 @@
     float: left;
     width: 150px;
     max-width: calc(100% - 10px);
+    padding-top: 0;
 }
 .ogptext {
     float: left;
