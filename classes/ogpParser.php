@@ -179,5 +179,3 @@ class ogpParser
         return empty($this->values) ? false : $this->values;
     }
 }
-
-// EoF

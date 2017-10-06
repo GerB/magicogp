@@ -9,7 +9,7 @@
     "authors": [
         {
             "name": "Ger",
-            "email": "",
+            "email": "dont@email.me",
             "homepage": "https://github.com/GerB",
             "role": ""
         }
@@ -20,7 +20,7 @@
     "extra": {
         "display-name": "Magic OGP parser",
         "soft-require": {
-            "phpbb/phpbb": ">=3.2,"
+            "phpbb/phpbb": ">=3.2"
         }
     }
 }
