@@ -11,7 +11,7 @@ class ext extends \phpbb\extension\base
 		{
 			$user = $this->container->get('user');
 			$user->add_lang_ext('ger/magicogp', 'info_acp_magicogp');
-			trigger_error($user->lang('MISSING_REQUIREMENTS'), E_USER_WARNING);
+			trigger_error($user->lang('MOGP_MISSING_REQUIREMENTS'), E_USER_WARNING);
 		}
 		return true;
     }

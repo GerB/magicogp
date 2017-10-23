@@ -55,7 +55,7 @@ class main_listener implements EventSubscriberInterface
         }
         else
         {
-            $this->log->add('critical', 0, 0, 'LOG_MISSING_SERVER_REQ');
+            $this->log->add('critical', 0, 0, 'MOGP_LOG_MISSING_SERVER_REQ');
         }
     }
 }

@@ -25,7 +25,6 @@ class ogpParser
         
         // Since the textformatter requires us to use a static function, we need to call ourselves here         
         $ogpParser = new self();
-                
         $ogpParser->fetch($tag->getAttribute('url'));
         if (!isset($ogpParser->values['image']) || !isset($ogpParser->values['title']) || !isset($ogpParser->values['description']))
         {
@@ -62,8 +61,8 @@ class ogpParser
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_TIMEOUT, 15);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 1);
         if ($useragentOverride)
         {
             curl_setopt($curl, CURLOPT_USERAGENT, $useragentOverride ); 
@@ -168,7 +167,8 @@ class ogpParser
         {
             foreach($found as $key => $value)
             {
-                if (strlen($value) > strlen($this->values[$key]))
+                // Get the longest value... It ain't wisdom but just gambling that longer equals better ;)
+                if ((!isset($this->values[$key])) || (strlen($value) > strlen($this->values[$key])) )
                 {
                     $this->values[$key] = $value;
                 }
