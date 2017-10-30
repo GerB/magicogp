@@ -26,3 +26,11 @@
 .ogpblock h4 {
     font-size: 1.4em;
 }
+
+@media (max-width: 700px) {
+    .ogpblock img ,
+    .ogptext {
+        float: none;
+        width: 100%;
+    }
+}
