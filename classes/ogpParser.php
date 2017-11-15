@@ -84,8 +84,8 @@ class ogpParser
         
         // Prevent errors on bad documents, load HTML and reset error handling
         $old_libxml_error = libxml_use_internal_errors(true);
-        $doc = new \DOMDocument();
-        $doc->loadHTML($html);
+        $doc = new \DOMDocument('1.0', 'utf-8');
+        $doc->loadHTML('<?xml encoding="utf-8"?>' . $html);
         libxml_use_internal_errors($old_libxml_error);
 
         $tags = $doc->getElementsByTagName('meta');
@@ -170,8 +170,8 @@ class ogpParser
                 }
             }
         }
-
+        
         // All done
         return empty($this->values) ? false : $this->values;
+        }
     }
-}
