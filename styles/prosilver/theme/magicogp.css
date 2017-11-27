@@ -3,6 +3,11 @@
     border: 0;
     color: #000;
 }
+.postlink.ogplink::after {
+    content: "";
+    display: block;
+    clear: both;
+}
 .ogpblock {
     background: rgba(255, 255, 255, .3);
     border: 1px solid #ccc;
