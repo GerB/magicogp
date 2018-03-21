@@ -3,5 +3,7 @@ services:
         class: ger\magicogp\event\main_listener
         arguments:
             - '@log'
+            - '@config'
+            - '@language'
         tags:
             - { name: event.listener }

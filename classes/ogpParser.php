@@ -13,9 +13,10 @@ class ogpParser
      * Get JSON encoded OGP tags
      * 
      * @param string $tag
+     * @param array $acceptLang
      * @return string
      */
-    static public function jsonTags($tag)
+    static public function jsonTags($tag, $acceptLang)
     {
         // Magic urls should have a taglength of 0
         if ($tag->getLen() > 0)
@@ -23,13 +24,13 @@ class ogpParser
             return true;
         }
         
-        // Since the textformatter requires us to use a static function, we need to call ourselves here         
+        // Since the textformatter requires us to use a static function, we need to call ourselves here   
         $ogpParser = new self();
-        $ogpParser->fetch($tag->getAttribute('url'));
+        $ogpParser->fetch($tag->getAttribute('url'), $acceptLang);
         if (!isset($ogpParser->values['image']) || !isset($ogpParser->values['title']) || !isset($ogpParser->values['description']))
         {
             // Try to override the user agent string
-            $ogpParser->fetch($tag->getAttribute('url') , 'Googlebot/2.1 (+http://www.google.com/bot.html)');
+            $ogpParser->fetch($tag->getAttribute('url'), $acceptLang, 'Googlebot/2.1 (+http://www.google.com/bot.html)');
         }
         
         // We at least want a title and description
@@ -50,16 +51,21 @@ class ogpParser
      * Fetches a URI and parses it for Open Graph data
      *
      * @param string $uri                   URI to page to parse for Open Graph data
+     * @param  array $acceptLang            Header to pass for http-accept-language.
      * @param string $useragentOverride     Useragent string to bypass blocks like cookie walls etc.
      * @return array|bool array with OGP values or false on error
      */
-    public function fetch($uri, $useragentOverride = false)
+    public function fetch($uri, $acceptLang, $useragentOverride = false)
     {
-        $curl = curl_init($uri);
+        $curl = curl_init($url= html_entity_decode($uri));
 
         curl_setopt($curl, CURLOPT_FAILONERROR, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);      
+        if ($acceptLang) 
+        {
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $acceptLang);
+        }
         curl_setopt($curl, CURLOPT_TIMEOUT, 15);
         if ($useragentOverride)
         {
@@ -173,5 +179,5 @@ class ogpParser
         
         // All done
         return empty($this->values) ? false : $this->values;
-        }
     }
+}
