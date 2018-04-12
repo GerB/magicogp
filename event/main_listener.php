@@ -90,7 +90,7 @@ class main_listener implements EventSubscriberInterface
         $accept = $default_lang;
         if ($user_lang != $default_lang)
         {
-            $accept .= ', ' . $default_lang . ';q=0.8';
+            $accept .= ', ' . $user_lang . ';q=0.8';
         }
         if (($user_lang != 'en') && ($default_lang != 'en'))
         {
