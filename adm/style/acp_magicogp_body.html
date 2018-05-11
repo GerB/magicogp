@@ -1,0 +1,19 @@
+<!-- INCLUDE overall_header.html -->
+
+<h1>{L_MOGP_SETTINGS_TITLE}</h1>
+<form id="acp_board" method="post" action="{U_ACTION}">
+    <fieldset>
+        <dl>
+            <dt><label for="ger_magicogp_blacklist">{L_MOGP_BLACKLIST}{L_COLON}</label><br /><span>{L_MOGP_BLACKLIST_EXPLAIN}</span></dt>
+            <dd><textarea id="ger_magicogp_blacklist" name="ger_magicogp_blacklist" rows="10" cols="70">{S_BLACKLIST}</textarea></dd>
+        </dl>
+        <p class="submit-buttons">
+            <input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+            <input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+        </p>
+
+        {S_FORM_TOKEN}
+    </fieldset>
+</form>
+
+<!-- INCLUDE overall_footer.html -->

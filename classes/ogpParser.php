@@ -14,9 +14,10 @@ class ogpParser
      * 
      * @param string $tag
      * @param array $acceptLang
+     * @param array $blacklist
      * @return string
      */
-    static public function jsonTags($tag, $acceptLang)
+    static public function jsonTags($tag, $acceptLang, $blacklist)
     {
         // Magic urls should have a taglength of 0
         if ($tag->getLen() > 0)
@@ -26,6 +27,11 @@ class ogpParser
         
         // Since the textformatter requires us to use a static function, we need to call ourselves here   
         $ogpParser = new self();
+        if ($ogpParser->blacklistCheck($blacklist, $tag->getAttribute('url')) == false)
+        {
+            return false;
+        }
+                
         $ogpParser->fetch($tag->getAttribute('url'), $acceptLang);
         if (!isset($ogpParser->values['image']) || !isset($ogpParser->values['title']) || !isset($ogpParser->values['description']))
         {
@@ -46,7 +52,25 @@ class ogpParser
         return true;
     }
 
-    
+    /**
+     * Check if URL is in Magic OGP blacklist
+     * @param array $blacklist
+     * @param string $url
+     * @return boolean false if found in blacklist, true otherwise
+     */
+    public function blacklistCheck($blacklist, $url) 
+    {
+        foreach ($blacklist as $entry)
+        {
+            if (strpos($url, trim($entry)) !== FALSE)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     /**
      * Fetches a URI and parses it for Open Graph data
      *

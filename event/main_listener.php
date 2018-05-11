@@ -22,22 +22,24 @@ class main_listener implements EventSubscriberInterface
 {
     protected $log;
     protected $config;
+    protected $config_text;
     protected $language;
     
 	static public function getSubscribedEvents()
 	{
-		return array(
-            'core.text_formatter_s9e_configure_after'	=> 'add_filterchain',
-		);
+            return array(
+                'core.text_formatter_s9e_configure_after'	=> 'add_filterchain',
+            );
 	}
 
-    public function __construct(\phpbb\log\log $log, \phpbb\config\config $config, \phpbb\language\language $language)
+    public function __construct(\phpbb\log\log $log, \phpbb\config\config $config, \phpbb\config\db_text $config_text, \phpbb\language\language $language)
     {
         $this->log = $log;
         $this->config = $config;
+        $this->config_text = $config_text;
         $this->language = $language;
     }
-    
+        
     /**
      * Add OGP tags to the filterchain
      * @param array $event
@@ -47,8 +49,9 @@ class main_listener implements EventSubscriberInterface
         if (function_exists('curl_init') && function_exists('libxml_use_internal_errors') && class_exists("\DOMXPath") && class_exists("\DOMDocument") )
         {    
             $acceptLang = $this->buildAcceptLang();
+            $blacklist = explode(PHP_EOL, $this->config_text->get('ger_magicogp_blacklist'));
             $tag = $event['configurator']->tags['URL'];
-            $tag->filterChain->append('\ger\magicogp\classes\ogpParser::jsonTags')->addParameterByValue($acceptLang);
+            $tag->filterChain->append('\ger\magicogp\classes\ogpParser::jsonTags')->addParameterByValue($acceptLang)->addParameterByValue($blacklist);
             $dom = $tag->template->asDOM();
             foreach ($dom->getElementsByTagName('a') as $a)
             {
