@@ -60,11 +60,14 @@ class ogpParser
      */
     public function blacklistCheck($blacklist, $url) 
     {
-        foreach ($blacklist as $entry)
+        if (is_array($blacklist))
         {
-            if (strpos($url, trim($entry)) !== FALSE)
+            foreach ($blacklist as $entry)
             {
-                return false;
+                if (strpos($url, trim($entry)) !== FALSE)
+                {
+                    return false;
+                }
             }
         }
         return true;
