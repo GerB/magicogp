@@ -64,9 +64,13 @@ class ogpParser
         {
             foreach ($blacklist as $entry)
             {
-                if (strpos($url, trim($entry)) !== FALSE)
+                $check = trim($entry);
+                if (!empty($check))
                 {
-                    return false;
+                    if (strpos($url, $check) !== FALSE)
+                    {
+                        return false;
+                    }
                 }
             }
         }
