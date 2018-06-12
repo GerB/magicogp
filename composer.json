@@ -3,8 +3,8 @@
     "type": "phpbb-extension",
     "description": "Enables OGP detection for pasted URLS in posts",
     "homepage": "",
-    "version": "1.0.5",
-    "time": "2018-05-15",
+    "version": "1.0.6",
+    "time": "2018-06-12",
     "license": "GPL-2.0",
     "authors": [
         {

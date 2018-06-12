@@ -60,6 +60,7 @@ class ogpParser
      */
     public function blacklistCheck($blacklist, $url) 
     {
+        // ACP entered blacklist
         if (is_array($blacklist))
         {
             foreach ($blacklist as $entry)
@@ -73,6 +74,16 @@ class ogpParser
                     }
                 }
             }
+        }
+        // Exlcude media and such
+        $exclude = ['aif', 'cda', 'mid', 'midi', 'mp3', 'mpa', 'ogg', 'wav', 'wma', 'wpi', '3g2', '3gp', 'avi', 'flv', 'h264', 'm4v', 'mkv', 'mov', 'mp4', 'mpg', 'mpeg', 'rm', 'swf', 'vob', 'wmv', 
+                    '7z', 'arj', 'deb', 'pkg', 'rar', 'rpm', 'tar.gz', 'z', 'zip', 'bin', 'dmg', 'iso', 'vcd', 'csv', 'dat', 'db', 'dbf', 'log', 'mdb', 'sav', 'sql', 'tar', 'xml', 'apk', 'bat', 'bin', 'cgi', 'pl', 'gadget', 'jar', 'py', 'wsf',
+                    'fnt', 'fon', 'otf', 'ttf', 'ai', 'bmp', 'gif', 'ico', 'jpeg', 'jpg', 'png', 'ps', 'psd', 'svg', 'tif', 'tiff', 'key', 'odp', 'pps', 'ppt', 'pptx', 'java', 'swift', 'ods', 'xlr', 'xls', 'xlsx',
+                    'bak', 'cab', 'cfg', 'cpl', 'cur', 'dll', 'dmp', 'drv', 'icns', 'ini', 'lnk', 'msi', 'sys', 'doc', 'docx', 'odt', 'pdf', 'rtf', 'tex', 'txt', 'wks', 'wps', 'wpd'];
+        $path = parse_url($url, PHP_URL_PATH);
+        $ext = substr(strrchr($path, "."), 1);
+        if (in_array($ext, $exclude)) {
+            return false;
         }
         return true;
     }
