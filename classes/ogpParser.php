@@ -29,7 +29,7 @@ class ogpParser
         $ogpParser = new self();
         if ($ogpParser->blacklistCheck($blacklist, $tag->getAttribute('url')) == false)
         {
-            return false;
+            return true;
         }
                 
         $ogpParser->fetch($tag->getAttribute('url'), $acceptLang);
