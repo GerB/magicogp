@@ -34,7 +34,6 @@ class main_module
                 }
                 // Store
                 $config_text->set('ger_magicogp_blacklist', $request->variable('ger_magicogp_blacklist', '', true));
-//                $cache->destroy('_magicogp');
                 $cache->purge();
                 trigger_error($user->lang('MOGP_SETTING_SAVED') . adm_back_link($this->u_action));
             }
