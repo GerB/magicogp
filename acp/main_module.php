@@ -21,7 +21,6 @@ class main_module
 	{
             global $request, $template, $user, $phpbb_container;
             $config_text = $phpbb_container->get('config_text');
-            $cache = $phpbb_container->get('cache.driver');
             $this->tpl_name     = 'acp_magicogp_body';
             $this->page_title	= $user->lang('MOGP_SETTINGS_TITLE');
             add_form_key('ger/magicogp');
@@ -34,7 +33,7 @@ class main_module
                 }
                 // Store
                 $config_text->set('ger_magicogp_blacklist', $request->variable('ger_magicogp_blacklist', '', true));
-                $cache->purge();
+                $phpbb_container->get('text_formatter.cache')->invalidate();
                 trigger_error($user->lang('MOGP_SETTING_SAVED') . adm_back_link($this->u_action));
             }
             
